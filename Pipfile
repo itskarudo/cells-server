@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[scripts]
+start = "python3 ./run.py"
+
+[dev-packages]
+autopep8 = "*"
+pylint = "*"
+
+[packages]
+flask = "*"
+scapy = "*"
+netifaces = "*"
+flask-restful = "*"
+pyeventemitter = "*"
+flask-sqlalchemy = "*"
+
+[requires]
+python_version = "3.6"
