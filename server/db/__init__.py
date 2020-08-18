@@ -4,6 +4,10 @@ import sqlalchemy as sa
 
 
 Base = declarative_base()
-engine = sa.create_engine('sqlite:///data.db', echo=True)
+engine = sa.create_engine('sqlite:///data.db')
+
+session_factory = orm.sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 Base.metadata.bind = engine
-session = orm.scoped_session(orm.sessionmaker())(bind=engine)
+
+Session = orm.scoped_session(session_factory)

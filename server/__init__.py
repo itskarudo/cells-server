@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restful import Api
-from server.web.routes import IFace
+from server.web.routes import IFace, Devices
 
 import event_emitter as events
 
@@ -11,3 +11,4 @@ api = Api(app)
 
 
 api.add_resource(IFace, '/ifaces')
+api.add_resource(Devices, '/devices')

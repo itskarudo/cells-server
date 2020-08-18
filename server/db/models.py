@@ -11,7 +11,7 @@ class Device(Base):
     scripts = orm.relationship('Script', backref='owner', lazy=True)
 
     def __repr__(self):
-        return "User<name={}, mac={}>".format(self.name, self.mac)
+        return "Device<name={}, mac={}>".format(self.name, self.mac)
 
 
 class Script(Base):
