@@ -7,8 +7,8 @@ verify_ssl = true
 start = "python3 ./run.py"
 
 [dev-packages]
-autopep8 = "*"
 pylint = "*"
+autopep8 = "*"
 
 [packages]
 flask = "*"
@@ -16,7 +16,8 @@ scapy = "*"
 netifaces = "*"
 flask-restful = "*"
 pyeventemitter = "*"
-flask-sqlalchemy = "*"
+sqlalchemy = "*"
+marshmallow-sqlalchemy = "*"
 
 [requires]
 python_version = "3.6"

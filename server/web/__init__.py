@@ -1,6 +1,8 @@
+import netifaces as ni
 from flask_restful import Resource
 from server.db import Session
 from server.db.models import Device
+from server.db.schemas import DeviceSchema
 
 
 class IFace(Resource):
@@ -13,16 +15,11 @@ class Devices(Resource):
     def get(self):
         session = Session()
         raw_devices = session.query(Device).all()
-        devices = []
-        for device in raw_devices:
-            e = {
-                "name": device.name,
-                "mac": device.mac,
-                "interface": device.interface,
-                "active": device.active
-            }
-            devices.append(e)
+
+        device_schema = DeviceSchema(many=True)
+        devices = device_schema.dump(raw_devices)
 
         session.flush()
         session.close()
+
         return devices
