@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restful import Api
-from server.web.routes import IFace, Devices
+from server.web import IFace, Devices
 
 import event_emitter as events
 
