@@ -1,4 +1,4 @@
-from server.db.models import *
+from server.db.models import Device, Script
 import marshmallow_sqlalchemy as ma
 
 
