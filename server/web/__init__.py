@@ -7,13 +7,13 @@ from server.db.schemas import DeviceSchema
 from server.web.utils import is_mac
 
 
-class IFace(Resource):
+class InterfacesRoute(Resource):
     def get(self):
         ifaces = ni.interfaces()
         return ifaces
 
 
-class Devices(Resource):
+class DevicesRoute(Resource):
     def get(self):
         session = Session()
         raw_devices = session.query(Device).all()
@@ -24,7 +24,7 @@ class Devices(Resource):
         session.flush()
         session.close()
 
-        return devices
+        return {"ok": True, "devices": devices}
 
     def post(self):
         """
@@ -63,7 +63,31 @@ class Devices(Resource):
             session.flush()
             session.close()
 
-            return json_device
+            return {"ok": True, "device": json_device}
 
         else:
-            return errors, 400
+            return {"ok": False, "errors": errors}, 400
+
+
+class DeviceRoute(Resource):
+    def get(self, device_id):
+        session = Session()
+        raw_device = session.query(Device).filter(
+            Device.id == device_id).first()
+
+        device_schema = DeviceSchema()
+        device = device_schema.dump(raw_device)
+
+        session.flush()
+        session.close()
+
+        return {"ok": True, "device": device}
+
+    def delete(self, device_id):
+        session = Session()
+        session.query(Device).filter(Device.id == device_id).delete()
+        session.commit()
+
+        session.flush()
+        session.close()
+        return {"ok": True}
