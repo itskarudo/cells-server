@@ -4,7 +4,7 @@ from flask_restful import Resource
 from server.db import Session
 from server.db.models import Device
 from server.db.schemas import DeviceSchema
-from server.web.utils import is_mac
+from server.web.validation import device_validation
 
 
 class InterfacesRoute(Resource):
@@ -36,17 +36,7 @@ class DevicesRoute(Resource):
         """
         data = request.get_json()
 
-        errors = []
-        if "name" not in data:
-            errors.append("NAME_NOT_FOUND")
-
-        if "mac" not in data:
-            errors.append("MAC_NOT_FOUND")
-        elif not is_mac(data["mac"]):
-            errors.append("MAC_NOT_VALID")
-
-        if "interface" not in data:
-            errors.append("INTERFACE_NOT_FOUND")
+        errors = device_validation(data)
 
         if not errors:
 
@@ -91,3 +81,31 @@ class DeviceRoute(Resource):
         session.flush()
         session.close()
         return {"ok": True}
+
+    def put(self, device_id):
+        data = request.get_json()
+        errors = device_validation(data, active=True)
+
+        if not errors:
+            session = Session()
+            device = session.query(Device).filter(
+                Device.id == device_id).first()
+
+            if device is None:
+                return {"ok": False, "errors": ["DEVICE_NOT_FOUND"]}, 404
+            else:
+                device.name = data["name"]
+                device.mac = data["mac"]
+                device.interface = data["interface"]
+                device.active = data["active"]
+
+                session.commit()
+
+                device_schema = DeviceSchema()
+                device_json = device_schema.dump(device)
+                session.flush()
+                session.close()
+
+                return {"ok": True, "device": device_json}
+        else:
+            return {"ok": False, "errors": errors}, 400
