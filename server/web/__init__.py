@@ -117,6 +117,20 @@ class DeviceRoute(Resource):
             return {"ok": False, "errors": errors}, 400
 
 
+class ScriptsRoute(Resource):
+    def get(self):
+        session = Session()
+        raw_scripts = session.query(Script).all()
+
+        script_schema = ScriptSchema(many=True)
+        scripts = script_schema.dump(raw_scripts)
+
+        session.flush()
+        session.close()
+
+        return {"ok": True, "scripts": scripts}
+
+
 class ScriptRoute(Resource):
     def get(self, script_id):
         session = Session()
