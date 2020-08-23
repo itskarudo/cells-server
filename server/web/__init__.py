@@ -146,3 +146,31 @@ class ScriptRoute(Resource):
         session.close()
 
         return {"ok": True}
+
+    def put(self, script_id):
+        data = request.get_json()
+
+        if "command" not in data:
+            return {"ok": False, "errors": ["COMMAND_NOT_FOUND"]}, 400
+
+        else:
+            session = Session()
+
+            script = session.query(Script).filter(
+                Script.id == script_id).first()
+
+            if script is None:
+                return {"ok": False, "errors": ["SCRIPT_NOT_FOUND"]}, 404
+
+            else:
+                script.command = data["command"]
+
+                session.commit()
+
+                script_schema = ScriptSchema()
+                script_json = script_schema.dump(script)
+
+                session.flush()
+                session.close()
+
+                return {"ok": True, "script": script_json}
