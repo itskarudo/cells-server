@@ -2,8 +2,8 @@ import netifaces as ni
 from flask import request
 from flask_restful import Resource
 from server.db import Session
-from server.db.models import Device
-from server.db.schemas import DeviceSchema
+from server.db.models import Device, Script
+from server.db.schemas import DeviceSchema, ScriptSchema
 from server.web.validation import device_validation
 
 
@@ -109,3 +109,17 @@ class DeviceRoute(Resource):
                 return {"ok": True, "device": device_json}
         else:
             return {"ok": False, "errors": errors}, 400
+
+
+class ScriptRoute(Resource):
+    def get(self, script_id):
+        session = Session()
+        raw_script = session.query(Script).filter(
+            Script.id == script_id).first()
+        script_schema = ScriptSchema()
+        script = script_schema.dump(raw_script)
+
+        session.flush()
+        session.close()
+
+        return {"ok": True, "script": script}

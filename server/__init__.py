@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restful import Api
-from server.web import InterfacesRoute, DevicesRoute, DeviceRoute
+from server.web import InterfacesRoute, DevicesRoute, DeviceRoute, ScriptRoute
 
 import event_emitter as events
 
@@ -12,3 +12,4 @@ api = Api(app)
 api.add_resource(InterfacesRoute, '/interfaces')
 api.add_resource(DevicesRoute, '/devices')
 api.add_resource(DeviceRoute, '/device/<device_id>')
+api.add_resource(ScriptRoute, '/script/<script_id>')
