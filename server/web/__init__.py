@@ -130,6 +130,46 @@ class ScriptsRoute(Resource):
 
         return {"ok": True, "scripts": scripts}
 
+    def post(self):
+        data = request.get_json()
+
+        errors = []
+
+        if "command" not in data:
+            errors.append("COMMAND_NOT_FOUND")
+        if "device_id" not in data:
+            errors.append("DEVICE_ID_NOT_FOUND")
+
+        if not errors:
+            session = Session()
+
+            parent_device = session.query(Device).filter(
+                Device.id == data["device_id"]).first()
+
+            if parent_device is None:
+                session.flush()
+                session.close()
+                return {"ok": False, "errors": ["PARENT_DEVICE_NOT_FOUND"]}, 400
+
+            else:
+
+                script = Script(command=data["command"],
+                                device_id=data["device_id"])
+
+                session.add(script)
+                session.commit()
+
+                script_schema = ScriptSchema()
+                script_json = script_schema.dump(script)
+
+                session.flush()
+                session.close()
+
+                return {"ok": True, "script": script_json}
+
+        else:
+            return {"ok": False, "errors": errors}, 400
+
 
 class ScriptRoute(Resource):
     def get(self, script_id):
