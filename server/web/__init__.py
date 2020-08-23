@@ -65,13 +65,19 @@ class DeviceRoute(Resource):
         raw_device = session.query(Device).filter(
             Device.id == device_id).first()
 
-        device_schema = DeviceSchema()
-        device = device_schema.dump(raw_device)
+        if not raw_device:
+            session.flush()
+            session.close()
+            return {"ok": False, "errors": ["DEVICE_NOT_FOUND"]}, 404
+        else:
 
-        session.flush()
-        session.close()
+            device_schema = DeviceSchema()
+            device = device_schema.dump(raw_device)
 
-        return {"ok": True, "device": device}
+            session.flush()
+            session.close()
+
+            return {"ok": True, "device": device}
 
     def delete(self, device_id):
         session = Session()
@@ -116,10 +122,17 @@ class ScriptRoute(Resource):
         session = Session()
         raw_script = session.query(Script).filter(
             Script.id == script_id).first()
-        script_schema = ScriptSchema()
-        script = script_schema.dump(raw_script)
 
-        session.flush()
-        session.close()
+        if not raw_script:
+            session.flush()
+            session.close()
+            return {"ok": False, "errors": ["SCRIPT_NOT_FOUND"]}, 404
+        else:
 
-        return {"ok": True, "script": script}
+            script_schema = ScriptSchema()
+            script = script_schema.dump(raw_script)
+
+            session.flush()
+            session.close()
+
+            return {"ok": True, "script": script}
