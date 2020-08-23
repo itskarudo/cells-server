@@ -119,8 +119,16 @@ class DeviceRoute(Resource):
 
 class ScriptsRoute(Resource):
     def get(self):
+
+        device_id = request.args.get('device_id')
+
         session = Session()
-        raw_scripts = session.query(Script).all()
+
+        if device_id is None:
+            raw_scripts = session.query(Script).all()
+        else:
+            raw_scripts = session.query(Script).filter(
+                Script.device_id == device_id).all()
 
         script_schema = ScriptSchema(many=True)
         scripts = script_schema.dump(raw_scripts)
