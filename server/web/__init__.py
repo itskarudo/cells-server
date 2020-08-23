@@ -136,3 +136,13 @@ class ScriptRoute(Resource):
             session.close()
 
             return {"ok": True, "script": script}
+
+    def delete(self, script_id):
+        session = Session()
+        session.query(Script).filter(Script.id == script_id).delete()
+        session.commit()
+
+        session.flush()
+        session.close()
+
+        return {"ok": True}
