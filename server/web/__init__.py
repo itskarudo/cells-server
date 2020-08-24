@@ -117,6 +117,23 @@ class DeviceRoute(Resource):
             return {"ok": False, "errors": errors}, 400
 
 
+class SwitchDeviceRoute(Resource):
+    def get(self, device_id):
+        session = Session()
+        device = session.query(Device).filter(Device.id == device_id).first()
+
+        if device is None:
+            return {"ok": False, "errors": ["DEVICE_NOT_FOUND"]}, 400
+        else:
+            device.active = not device.active
+            session.commit()
+
+            device_schema = DeviceSchema()
+            device_json = device_schema.dump(device)
+
+            return {"ok": True, "device": device_json}
+
+
 class ScriptsRoute(Resource):
     def get(self):
 
